@@ -153,6 +153,15 @@ export class FizzyAPI {
     });
   }
 
+  // Taggings
+  async toggleTag(cardNumber, tagTitle) {
+    this.requireAccount();
+    return this.request(`/${this.accountSlug}/cards/${cardNumber}/taggings`, {
+      method: 'POST',
+      body: JSON.stringify({ tag_title: tagTitle }),
+    });
+  }
+
   // Comments
   async listComments(cardNumber) {
     this.requireAccount();

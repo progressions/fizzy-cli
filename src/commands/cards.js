@@ -85,7 +85,7 @@ export function cardsCommand(program) {
         }
 
         if (card.tags && card.tags.length > 0) {
-          console.log(`Tags: ${card.tags.map(t => t.name).join(', ')}`);
+          console.log(`Tags: ${card.tags.map(t => typeof t === 'string' ? t : t.name).join(', ')}`);
         }
 
         if (card.content) {
@@ -347,6 +347,23 @@ export function cardsCommand(program) {
         }
 
         success(`Comment added to card #${cardNumber}`);
+      } catch (err) {
+        spinner.stop();
+        error(err.message);
+        process.exit(1);
+      }
+    });
+
+  cards
+    .command('tag <cardNumber> <tagName>')
+    .description('Toggle a tag on a card (adds if not present, removes if present)')
+    .action(async (cardNumber, tagName) => {
+      const spinner = ora('Toggling tag...').start();
+      try {
+        const api = new FizzyAPI();
+        await api.toggleTag(cardNumber, tagName);
+        spinner.stop();
+        success(`Tag "${tagName}" toggled on card #${cardNumber}`);
       } catch (err) {
         spinner.stop();
         error(err.message);
