@@ -9,7 +9,8 @@
   },
   "scripts": {
     "start": "node bin/fizzy.js",
-    "test": "echo \"No tests yet\""
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "keywords": [
     "fizzy",
@@ -25,5 +26,8 @@
     "conf": "^13.0.1",
     "ora": "^8.1.1",
     "table": "^6.8.2"
+  },
+  "devDependencies": {
+    "vitest": "^4.0.15"
   }
 }
