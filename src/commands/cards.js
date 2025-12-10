@@ -137,23 +137,53 @@ export function cardsCommand(program) {
     .description('Update a card')
     .option('-t, --title <title>', 'New title')
     .option('-d, --description <content>', 'New content')
-    .option('-c, --column <id>', 'Move to column ID')
+    .option('-s, --status <status>', 'Set status (published, closed, not_now)')
+    .option('--tags <ids>', 'Set tag IDs (comma-separated)')
     .option('--json', 'Output as JSON')
     .action(async (number, options) => {
       const data = {};
       if (options.title) data.title = options.title;
-      if (options.description) data.content = options.description;
-      if (options.column) data.column_id = options.column;
+      if (options.description) data.description = options.description;
+      if (options.tags) data.tag_ids = options.tags.split(',').map(id => id.trim());
 
-      if (Object.keys(data).length === 0) {
-        error('No update options provided. Use --title, --description, or --column');
+      const hasDataUpdates = Object.keys(data).length > 0;
+      const hasStatusUpdate = !!options.status;
+
+      if (!hasDataUpdates && !hasStatusUpdate) {
+        error('No update options provided. Use --title, --description, --status, or --tags');
         process.exit(1);
       }
 
       const spinner = ora('Updating card...').start();
       try {
         const api = new FizzyAPI();
-        const card = await api.updateCard(number, data);
+        let card;
+
+        // Handle status changes via dedicated endpoints
+        if (hasStatusUpdate) {
+          const status = options.status.toLowerCase();
+          if (status === 'closed') {
+            await api.closeCard(number);
+          } else if (status === 'not_now') {
+            await api.setCardNotNow(number);
+          } else if (status === 'published') {
+            // Reopen and remove not_now to get back to published
+            await api.reopenCard(number).catch(() => {});
+            await api.unsetCardNotNow(number).catch(() => {});
+          } else {
+            spinner.stop();
+            error(`Invalid status: ${options.status}. Use: published, closed, or not_now`);
+            process.exit(1);
+          }
+        }
+
+        // Handle field updates via PUT
+        if (hasDataUpdates) {
+          card = await api.updateCard(number, data);
+        } else {
+          card = await api.getCard(number);
+        }
+
         spinner.stop();
 
         if (options.json) {

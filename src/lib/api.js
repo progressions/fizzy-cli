@@ -114,7 +114,7 @@ export class FizzyAPI {
     this.requireAccount();
     return this.request(`/${this.accountSlug}/cards/${cardNumber}`, {
       method: 'PUT',
-      body: JSON.stringify(data),
+      body: JSON.stringify({ card: data }),
     });
   }
 
@@ -135,6 +135,20 @@ export class FizzyAPI {
   async reopenCard(cardNumber) {
     this.requireAccount();
     return this.request(`/${this.accountSlug}/cards/${cardNumber}/closure`, {
+      method: 'DELETE',
+    });
+  }
+
+  async setCardNotNow(cardNumber) {
+    this.requireAccount();
+    return this.request(`/${this.accountSlug}/cards/${cardNumber}/not_now`, {
+      method: 'POST',
+    });
+  }
+
+  async unsetCardNotNow(cardNumber) {
+    this.requireAccount();
+    return this.request(`/${this.accountSlug}/cards/${cardNumber}/not_now`, {
       method: 'DELETE',
     });
   }
