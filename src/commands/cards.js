@@ -110,7 +110,7 @@ export function cardsCommand(program) {
         const api = new FizzyAPI();
         const card = await api.createCard(boardId, {
           title,
-          content: options.description,
+          description: options.description,
           column_id: options.column,
         });
         spinner.stop();
@@ -120,7 +120,11 @@ export function cardsCommand(program) {
           return;
         }
 
-        success(`Card created: #${card.number} - ${card.title}`);
+        if (card) {
+          success(`Card created: #${card.number} - ${card.title}`);
+        } else {
+          success(`Card created: "${title}"`);
+        }
       } catch (err) {
         spinner.stop();
         error(err.message);

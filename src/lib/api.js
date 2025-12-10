@@ -37,7 +37,11 @@ export class FizzyAPI {
       return null;
     }
 
-    return response.json();
+    const text = await response.text();
+    if (!text) {
+      return null;
+    }
+    return JSON.parse(text);
   }
 
   // Identity
@@ -102,7 +106,7 @@ export class FizzyAPI {
     this.requireAccount();
     return this.request(`/${this.accountSlug}/boards/${boardId}/cards`, {
       method: 'POST',
-      body: JSON.stringify(data),
+      body: JSON.stringify({ card: data }),
     });
   }
 
