@@ -220,6 +220,51 @@ export function cardsCommand(program) {
       }
     });
 
+  // Search command
+  cards
+    .command('search <query>')
+    .alias('find')
+    .description('Search cards by title or description')
+    .option('--json', 'Output as JSON')
+    .action(async (query, options) => {
+      const spinner = ora('Searching cards...').start();
+      try {
+        const api = new FizzyAPI();
+        const cardList = await api.listCards();
+        spinner.stop();
+
+        const queryLower = query.toLowerCase();
+        const matches = cardList.filter(c =>
+          c.title?.toLowerCase().includes(queryLower) ||
+          c.description?.toLowerCase().includes(queryLower)
+        );
+
+        if (options.json) {
+          json(matches);
+          return;
+        }
+
+        if (!matches || matches.length === 0) {
+          console.log(`No cards found matching "${query}"`);
+          return;
+        }
+
+        console.log(`Found ${matches.length} card(s) matching "${query}":\n`);
+        matches.forEach(c => {
+          console.log(`#${c.number}: ${c.title}`);
+          console.log(`  URL: ${c.url}`);
+          if (c.description) {
+            console.log(`  ${truncate(c.description, 80)}`);
+          }
+          console.log();
+        });
+      } catch (err) {
+        spinner.stop();
+        error(err.message);
+        process.exit(1);
+      }
+    });
+
   // Comments subcommands
   cards
     .command('comments <cardNumber>')
