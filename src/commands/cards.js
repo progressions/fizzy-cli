@@ -321,7 +321,7 @@ export function cardsCommand(program) {
           console.log(`\n--- Comment ${i + 1} (ID: ${c.id}) ---`);
           console.log(`By: ${c.creator?.name || c.creator?.email || 'Unknown'}`);
           console.log(`Date: ${formatDate(c.created_at)}`);
-          console.log(`\n${c.content}`);
+          console.log(`\n${c.body?.plain_text || c.body}`);
         });
       } catch (err) {
         spinner.stop();
