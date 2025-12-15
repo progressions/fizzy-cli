@@ -186,7 +186,7 @@ export class FizzyAPI {
     this.requireAccount();
     return this.request(`/${this.accountSlug}/cards/${cardNumber}/comments`, {
       method: 'POST',
-      body: JSON.stringify({ content }),
+      body: JSON.stringify({ comment: { body: content } }),
     });
   }
 
