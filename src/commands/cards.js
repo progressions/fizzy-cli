@@ -234,6 +234,61 @@ export function cardsCommand(program) {
     });
 
   cards
+    .command('move <number> <column>')
+    .description('Move a card to a column (by column name or ID)')
+    .option('--json', 'Output as JSON')
+    .action(async (number, column, options) => {
+      const spinner = ora('Moving card...').start();
+      try {
+        const api = new FizzyAPI();
+
+        // First get the card to find its board
+        const card = await api.getCard(number);
+        if (!card || !card.board) {
+          spinner.stop();
+          error(`Card #${number} not found or has no board`);
+          process.exit(1);
+        }
+
+        // Get the board's columns
+        const columns = await api.listColumns(card.board.id);
+
+        // Find the column by ID or name (case-insensitive)
+        let targetColumn = columns.find(c => c.id === column);
+        if (!targetColumn) {
+          const columnLower = column.toLowerCase();
+          targetColumn = columns.find(c => c.name?.toLowerCase() === columnLower);
+        }
+
+        if (!targetColumn) {
+          spinner.stop();
+          if (!columns || columns.length === 0) {
+            error(`Column "${column}" not found and the board has no available columns.`);
+          } else {
+            error(`Column "${column}" not found. Available columns: ${columns.map(c => c.name).join(', ')}`);
+          }
+          process.exit(1);
+        }
+
+        // Move the card using triage endpoint
+        await api.triageCard(number, targetColumn.id);
+        spinner.stop();
+
+        if (options.json) {
+          const updatedCard = await api.getCard(number);
+          json(updatedCard);
+          return;
+        }
+
+        success(`Card #${number} moved to "${targetColumn.name}"`);
+      } catch (err) {
+        spinner.stop();
+        error(err.message);
+        process.exit(1);
+      }
+    });
+
+  cards
     .command('delete <number>')
     .description('Delete a card')
     .action(async (number) => {

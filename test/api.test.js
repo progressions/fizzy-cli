@@ -319,6 +319,43 @@ describe('FizzyAPI', () => {
     });
   });
 
+  describe('listColumns', () => {
+    it('should fetch columns for board', async () => {
+      global.fetch.mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        text: async () => JSON.stringify([{ id: '1', name: 'To Do' }, { id: '2', name: 'Done' }]),
+      });
+
+      await api.listColumns('board-123');
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        'https://app.fizzy.do/test-account/boards/board-123/columns',
+        expect.any(Object)
+      );
+    });
+  });
+
+  describe('triageCard', () => {
+    it('should POST column_id to triage endpoint', async () => {
+      global.fetch.mockResolvedValueOnce({
+        ok: true,
+        status: 204,
+        text: async () => '',
+      });
+
+      await api.triageCard(1, 'column-456');
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        'https://app.fizzy.do/test-account/cards/1/triage',
+        expect.objectContaining({
+          method: 'POST',
+          body: JSON.stringify({ column_id: 'column-456' }),
+        })
+      );
+    });
+  });
+
   describe('requireAccount', () => {
     it('should throw if no account configured', () => {
       const noAccountApi = new FizzyAPI('token', null);
