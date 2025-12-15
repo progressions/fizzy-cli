@@ -262,7 +262,11 @@ export function cardsCommand(program) {
 
         if (!targetColumn) {
           spinner.stop();
-          error(`Column "${column}" not found. Available columns: ${columns.map(c => c.name).join(', ')}`);
+          if (!columns || columns.length === 0) {
+            error(`Column "${column}" not found and the board has no available columns.`);
+          } else {
+            error(`Column "${column}" not found. Available columns: ${columns.map(c => c.name).join(', ')}`);
+          }
           process.exit(1);
         }
 
