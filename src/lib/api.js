@@ -83,6 +83,12 @@ export class FizzyAPI {
     });
   }
 
+  // Columns
+  async listColumns(boardId) {
+    this.requireAccount();
+    return this.request(`/${this.accountSlug}/boards/${boardId}/columns`);
+  }
+
   // Cards
   async listCards(options = {}) {
     this.requireAccount();
@@ -150,6 +156,14 @@ export class FizzyAPI {
     this.requireAccount();
     return this.request(`/${this.accountSlug}/cards/${cardNumber}/not_now`, {
       method: 'DELETE',
+    });
+  }
+
+  async triageCard(cardNumber, columnId) {
+    this.requireAccount();
+    return this.request(`/${this.accountSlug}/cards/${cardNumber}/triage`, {
+      method: 'POST',
+      body: JSON.stringify({ column_id: columnId }),
     });
   }
 
