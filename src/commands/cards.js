@@ -269,6 +269,40 @@ export function cardsCommand(program) {
     });
 
   cards
+    .command('watch <number>')
+    .description('Watch a card for notifications')
+    .action(async (number) => {
+      const spinner = ora('Watching card...').start();
+      try {
+        const api = new FizzyAPI();
+        await api.watchCard(number);
+        spinner.stop();
+        success(`Now watching card #${number}`);
+      } catch (err) {
+        spinner.stop();
+        error(err.message);
+        process.exit(1);
+      }
+    });
+
+  cards
+    .command('unwatch <number>')
+    .description('Stop watching a card')
+    .action(async (number) => {
+      const spinner = ora('Unwatching card...').start();
+      try {
+        const api = new FizzyAPI();
+        await api.unwatchCard(number);
+        spinner.stop();
+        success(`Stopped watching card #${number}`);
+      } catch (err) {
+        spinner.stop();
+        error(err.message);
+        process.exit(1);
+      }
+    });
+
+  cards
     .command('move <number> <column>')
     .description('Move a card to a column (by column name or ID)')
     .option('--json', 'Output as JSON')
