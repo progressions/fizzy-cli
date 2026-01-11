@@ -285,6 +285,26 @@ describe('FizzyAPI', () => {
     });
   });
 
+  describe('toggleAssignment', () => {
+    it('should POST assignee_id to assignments endpoint', async () => {
+      global.fetch.mockResolvedValueOnce({
+        ok: true,
+        status: 204,
+        text: async () => '',
+      });
+
+      await api.toggleAssignment(1, 'user-123');
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        'https://app.fizzy.do/test-account/cards/1/assignments',
+        expect.objectContaining({
+          method: 'POST',
+          body: JSON.stringify({ assignee_id: 'user-123' }),
+        })
+      );
+    });
+  });
+
   describe('listBoards', () => {
     it('should fetch boards', async () => {
       global.fetch.mockResolvedValueOnce({

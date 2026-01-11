@@ -554,4 +554,42 @@ export function cardsCommand(program) {
         process.exit(1);
       }
     });
+
+  cards
+    .command('assign <cardNumber> <user>')
+    .description('Toggle assignment on a card (by user name, email, or ID)')
+    .action(async (cardNumber, user) => {
+      const spinner = ora('Toggling assignment...').start();
+      try {
+        const api = new FizzyAPI();
+
+        // Get list of users to find target
+        const users = await api.listUsers();
+
+        // Find the user by ID, name, or email (case-insensitive)
+        let targetUser = users.find(u => u.id === user);
+        if (!targetUser) {
+          const userLower = user.toLowerCase();
+          targetUser = users.find(u =>
+            u.name?.toLowerCase() === userLower ||
+            u.email?.toLowerCase() === userLower ||
+            u.email_address?.toLowerCase() === userLower
+          );
+        }
+
+        if (!targetUser) {
+          spinner.stop();
+          error(`User "${user}" not found. Available users: ${users.map(u => u.name || u.email || u.email_address).join(', ')}`);
+          process.exit(1);
+        }
+
+        await api.toggleAssignment(cardNumber, targetUser.id);
+        spinner.stop();
+        success(`Assignment toggled for "${targetUser.name || targetUser.email || targetUser.email_address}" on card #${cardNumber}`);
+      } catch (err) {
+        spinner.stop();
+        error(err.message);
+        process.exit(1);
+      }
+    });
 }
