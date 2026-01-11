@@ -221,6 +221,15 @@ export class FizzyAPI {
     });
   }
 
+  // Assignments
+  async toggleAssignment(cardNumber, assigneeId) {
+    this.requireAccount();
+    return this.request(`/${this.accountSlug}/cards/${cardNumber}/assignments`, {
+      method: 'POST',
+      body: JSON.stringify({ assignee_id: assigneeId }),
+    });
+  }
+
   // Comments
   async listComments(cardNumber) {
     this.requireAccount();
