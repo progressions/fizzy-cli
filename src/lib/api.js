@@ -174,6 +174,21 @@ export class FizzyAPI {
     });
   }
 
+  // Watch (notifications)
+  async watchCard(cardNumber) {
+    this.requireAccount();
+    return this.request(`/${this.accountSlug}/cards/${cardNumber}/watch`, {
+      method: 'POST',
+    });
+  }
+
+  async unwatchCard(cardNumber) {
+    this.requireAccount();
+    return this.request(`/${this.accountSlug}/cards/${cardNumber}/watch`, {
+      method: 'DELETE',
+    });
+  }
+
   // Goldness (priority marking)
   async gildCard(cardNumber) {
     this.requireAccount();

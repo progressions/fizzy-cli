@@ -413,6 +413,44 @@ describe('FizzyAPI', () => {
     });
   });
 
+  describe('watchCard', () => {
+    it('should POST to watch endpoint', async () => {
+      global.fetch.mockResolvedValueOnce({
+        ok: true,
+        status: 204,
+        text: async () => '',
+      });
+
+      await api.watchCard(1);
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        'https://app.fizzy.do/test-account/cards/1/watch',
+        expect.objectContaining({
+          method: 'POST',
+        })
+      );
+    });
+  });
+
+  describe('unwatchCard', () => {
+    it('should DELETE watch endpoint', async () => {
+      global.fetch.mockResolvedValueOnce({
+        ok: true,
+        status: 204,
+        text: async () => '',
+      });
+
+      await api.unwatchCard(1);
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        'https://app.fizzy.do/test-account/cards/1/watch',
+        expect.objectContaining({
+          method: 'DELETE',
+        })
+      );
+    });
+  });
+
   describe('requireAccount', () => {
     it('should throw if no account configured', () => {
       const noAccountApi = new FizzyAPI('token', null);
