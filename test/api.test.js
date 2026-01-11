@@ -435,6 +435,44 @@ describe('FizzyAPI', () => {
     });
   });
 
+  describe('moveColumnLeft', () => {
+    it('should POST to left_position endpoint', async () => {
+      global.fetch.mockResolvedValueOnce({
+        ok: true,
+        status: 204,
+        text: async () => '',
+      });
+
+      await api.moveColumnLeft('col-456');
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        'https://app.fizzy.do/test-account/columns/col-456/left_position',
+        expect.objectContaining({
+          method: 'POST',
+        })
+      );
+    });
+  });
+
+  describe('moveColumnRight', () => {
+    it('should POST to right_position endpoint', async () => {
+      global.fetch.mockResolvedValueOnce({
+        ok: true,
+        status: 204,
+        text: async () => '',
+      });
+
+      await api.moveColumnRight('col-456');
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        'https://app.fizzy.do/test-account/columns/col-456/right_position',
+        expect.objectContaining({
+          method: 'POST',
+        })
+      );
+    });
+  });
+
   describe('triageCard', () => {
     it('should POST column_id to triage endpoint', async () => {
       global.fetch.mockResolvedValueOnce({
