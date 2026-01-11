@@ -125,4 +125,38 @@ export function columnsCommand(program) {
         process.exit(1);
       }
     });
+
+  columns
+    .command('move-left <columnId>')
+    .description('Move a column one position to the left')
+    .action(async (columnId) => {
+      const spinner = ora('Moving column left...').start();
+      try {
+        const api = new FizzyAPI();
+        await api.moveColumnLeft(columnId);
+        spinner.stop();
+        success('Column moved left');
+      } catch (err) {
+        spinner.stop();
+        error(err.message);
+        process.exit(1);
+      }
+    });
+
+  columns
+    .command('move-right <columnId>')
+    .description('Move a column one position to the right')
+    .action(async (columnId) => {
+      const spinner = ora('Moving column right...').start();
+      try {
+        const api = new FizzyAPI();
+        await api.moveColumnRight(columnId);
+        spinner.stop();
+        success('Column moved right');
+      } catch (err) {
+        spinner.stop();
+        error(err.message);
+        process.exit(1);
+      }
+    });
 }

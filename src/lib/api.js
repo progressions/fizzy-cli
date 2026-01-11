@@ -112,6 +112,20 @@ export class FizzyAPI {
     });
   }
 
+  async moveColumnLeft(columnId) {
+    this.requireAccount();
+    return this.request(`/${this.accountSlug}/columns/${columnId}/left_position`, {
+      method: 'POST',
+    });
+  }
+
+  async moveColumnRight(columnId) {
+    this.requireAccount();
+    return this.request(`/${this.accountSlug}/columns/${columnId}/right_position`, {
+      method: 'POST',
+    });
+  }
+
   // Cards
   async listCards(options = {}) {
     this.requireAccount();
