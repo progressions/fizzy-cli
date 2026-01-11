@@ -376,6 +376,65 @@ describe('FizzyAPI', () => {
     });
   });
 
+  describe('createColumn', () => {
+    it('should POST column data to board columns endpoint', async () => {
+      global.fetch.mockResolvedValueOnce({
+        ok: true,
+        status: 201,
+        text: async () => JSON.stringify({ id: '1', name: 'New Column' }),
+      });
+
+      await api.createColumn('board-123', { name: 'New Column' });
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        'https://app.fizzy.do/test-account/boards/board-123/columns',
+        expect.objectContaining({
+          method: 'POST',
+          body: JSON.stringify({ column: { name: 'New Column' } }),
+        })
+      );
+    });
+  });
+
+  describe('updateColumn', () => {
+    it('should PUT column data to column endpoint', async () => {
+      global.fetch.mockResolvedValueOnce({
+        ok: true,
+        status: 204,
+        text: async () => '',
+      });
+
+      await api.updateColumn('board-123', 'col-456', { name: 'Updated' });
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        'https://app.fizzy.do/test-account/boards/board-123/columns/col-456',
+        expect.objectContaining({
+          method: 'PUT',
+          body: JSON.stringify({ column: { name: 'Updated' } }),
+        })
+      );
+    });
+  });
+
+  describe('deleteColumn', () => {
+    it('should DELETE column endpoint', async () => {
+      global.fetch.mockResolvedValueOnce({
+        ok: true,
+        status: 204,
+        text: async () => '',
+      });
+
+      await api.deleteColumn('board-123', 'col-456');
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        'https://app.fizzy.do/test-account/boards/board-123/columns/col-456',
+        expect.objectContaining({
+          method: 'DELETE',
+        })
+      );
+    });
+  });
+
   describe('triageCard', () => {
     it('should POST column_id to triage endpoint', async () => {
       global.fetch.mockResolvedValueOnce({

@@ -89,6 +89,29 @@ export class FizzyAPI {
     return this.request(`/${this.accountSlug}/boards/${boardId}/columns`);
   }
 
+  async createColumn(boardId, data) {
+    this.requireAccount();
+    return this.request(`/${this.accountSlug}/boards/${boardId}/columns`, {
+      method: 'POST',
+      body: JSON.stringify({ column: data }),
+    });
+  }
+
+  async updateColumn(boardId, columnId, data) {
+    this.requireAccount();
+    return this.request(`/${this.accountSlug}/boards/${boardId}/columns/${columnId}`, {
+      method: 'PUT',
+      body: JSON.stringify({ column: data }),
+    });
+  }
+
+  async deleteColumn(boardId, columnId) {
+    this.requireAccount();
+    return this.request(`/${this.accountSlug}/boards/${boardId}/columns/${columnId}`, {
+      method: 'DELETE',
+    });
+  }
+
   // Cards
   async listCards(options = {}) {
     this.requireAccount();

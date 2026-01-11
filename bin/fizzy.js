@@ -3,6 +3,7 @@
 import { program } from 'commander';
 import { configCommand } from '../src/commands/config.js';
 import { boardsCommand } from '../src/commands/boards.js';
+import { columnsCommand } from '../src/commands/columns.js';
 import { cardsCommand } from '../src/commands/cards.js';
 import { identityCommand } from '../src/commands/identity.js';
 
@@ -15,6 +16,7 @@ program
 configCommand(program);
 identityCommand(program);
 boardsCommand(program);
+columnsCommand(program);
 cardsCommand(program);
 
 program.parse();
