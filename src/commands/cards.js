@@ -592,4 +592,70 @@ export function cardsCommand(program) {
         process.exit(1);
       }
     });
+
+  // Reaction commands
+  cards
+    .command('reactions <cardNumber> <commentId>')
+    .description('List reactions on a comment')
+    .option('--json', 'Output as JSON')
+    .action(async (cardNumber, commentId, options) => {
+      const spinner = ora('Fetching reactions...').start();
+      try {
+        const api = new FizzyAPI();
+        const reactions = await api.listReactions(cardNumber, commentId);
+        spinner.stop();
+
+        if (options.json) {
+          json(reactions);
+          return;
+        }
+
+        if (!reactions || reactions.length === 0) {
+          console.log('No reactions on this comment.');
+          return;
+        }
+
+        reactions.forEach(r => {
+          console.log(`${r.content}  ${r.reacter?.name || 'Unknown'} (${r.id})`);
+        });
+      } catch (err) {
+        spinner.stop();
+        error(err.message);
+        process.exit(1);
+      }
+    });
+
+  cards
+    .command('react <cardNumber> <commentId> <emoji>')
+    .description('Add a reaction to a comment')
+    .action(async (cardNumber, commentId, emoji) => {
+      const spinner = ora('Adding reaction...').start();
+      try {
+        const api = new FizzyAPI();
+        await api.addReaction(cardNumber, commentId, emoji);
+        spinner.stop();
+        success(`Reaction ${emoji} added to comment`);
+      } catch (err) {
+        spinner.stop();
+        error(err.message);
+        process.exit(1);
+      }
+    });
+
+  cards
+    .command('unreact <cardNumber> <commentId> <reactionId>')
+    .description('Remove a reaction from a comment')
+    .action(async (cardNumber, commentId, reactionId) => {
+      const spinner = ora('Removing reaction...').start();
+      try {
+        const api = new FizzyAPI();
+        await api.removeReaction(cardNumber, commentId, reactionId);
+        spinner.stop();
+        success('Reaction removed');
+      } catch (err) {
+        spinner.stop();
+        error(err.message);
+        process.exit(1);
+      }
+    });
 }
