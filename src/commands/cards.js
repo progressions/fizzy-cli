@@ -324,6 +324,23 @@ export function cardsCommand(program) {
     });
 
   cards
+    .command('untriage <number>')
+    .description('Send a card back to triage (remove from column)')
+    .action(async (number) => {
+      const spinner = ora('Sending card to triage...').start();
+      try {
+        const api = new FizzyAPI();
+        await api.untriageCard(number);
+        spinner.stop();
+        success(`Card #${number} sent back to triage`);
+      } catch (err) {
+        spinner.stop();
+        error(err.message);
+        process.exit(1);
+      }
+    });
+
+  cards
     .command('delete <number>')
     .description('Delete a card')
     .action(async (number) => {

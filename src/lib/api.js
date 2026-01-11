@@ -167,6 +167,13 @@ export class FizzyAPI {
     });
   }
 
+  async untriageCard(cardNumber) {
+    this.requireAccount();
+    return this.request(`/${this.accountSlug}/cards/${cardNumber}/triage`, {
+      method: 'DELETE',
+    });
+  }
+
   // Goldness (priority marking)
   async gildCard(cardNumber) {
     this.requireAccount();
