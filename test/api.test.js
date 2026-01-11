@@ -356,6 +356,25 @@ describe('FizzyAPI', () => {
     });
   });
 
+  describe('untriageCard', () => {
+    it('should DELETE triage endpoint', async () => {
+      global.fetch.mockResolvedValueOnce({
+        ok: true,
+        status: 204,
+        text: async () => '',
+      });
+
+      await api.untriageCard(1);
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        'https://app.fizzy.do/test-account/cards/1/triage',
+        expect.objectContaining({
+          method: 'DELETE',
+        })
+      );
+    });
+  });
+
   describe('gildCard', () => {
     it('should POST to goldness endpoint', async () => {
       global.fetch.mockResolvedValueOnce({
