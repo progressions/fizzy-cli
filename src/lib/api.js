@@ -288,6 +288,27 @@ export class FizzyAPI {
     });
   }
 
+  // Reactions
+  async listReactions(cardNumber, commentId) {
+    this.requireAccount();
+    return this.request(`/${this.accountSlug}/cards/${cardNumber}/comments/${commentId}/reactions`);
+  }
+
+  async addReaction(cardNumber, commentId, content) {
+    this.requireAccount();
+    return this.request(`/${this.accountSlug}/cards/${cardNumber}/comments/${commentId}/reactions`, {
+      method: 'POST',
+      body: JSON.stringify({ reaction: { content } }),
+    });
+  }
+
+  async removeReaction(cardNumber, commentId, reactionId) {
+    this.requireAccount();
+    return this.request(`/${this.accountSlug}/cards/${cardNumber}/comments/${commentId}/reactions/${reactionId}`, {
+      method: 'DELETE',
+    });
+  }
+
   // Tags
   async listTags() {
     this.requireAccount();
