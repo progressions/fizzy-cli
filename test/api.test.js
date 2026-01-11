@@ -313,7 +313,7 @@ describe('FizzyAPI', () => {
         'https://app.fizzy.do/test-account/cards/1/comments',
         expect.objectContaining({
           method: 'POST',
-          body: JSON.stringify({ content: 'New comment' }),
+          body: JSON.stringify({ comment: { body: 'New comment' } }),
         })
       );
     });
@@ -351,6 +351,44 @@ describe('FizzyAPI', () => {
         expect.objectContaining({
           method: 'POST',
           body: JSON.stringify({ column_id: 'column-456' }),
+        })
+      );
+    });
+  });
+
+  describe('gildCard', () => {
+    it('should POST to goldness endpoint', async () => {
+      global.fetch.mockResolvedValueOnce({
+        ok: true,
+        status: 204,
+        text: async () => '',
+      });
+
+      await api.gildCard(1);
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        'https://app.fizzy.do/test-account/cards/1/goldness',
+        expect.objectContaining({
+          method: 'POST',
+        })
+      );
+    });
+  });
+
+  describe('ungildCard', () => {
+    it('should DELETE goldness endpoint', async () => {
+      global.fetch.mockResolvedValueOnce({
+        ok: true,
+        status: 204,
+        text: async () => '',
+      });
+
+      await api.ungildCard(1);
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        'https://app.fizzy.do/test-account/cards/1/goldness',
+        expect.objectContaining({
+          method: 'DELETE',
         })
       );
     });

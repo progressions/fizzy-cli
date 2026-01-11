@@ -167,6 +167,21 @@ export class FizzyAPI {
     });
   }
 
+  // Goldness (priority marking)
+  async gildCard(cardNumber) {
+    this.requireAccount();
+    return this.request(`/${this.accountSlug}/cards/${cardNumber}/goldness`, {
+      method: 'POST',
+    });
+  }
+
+  async ungildCard(cardNumber) {
+    this.requireAccount();
+    return this.request(`/${this.accountSlug}/cards/${cardNumber}/goldness`, {
+      method: 'DELETE',
+    });
+  }
+
   // Taggings
   async toggleTag(cardNumber, tagTitle) {
     this.requireAccount();

@@ -73,8 +73,9 @@ export function cardsCommand(program) {
           return;
         }
 
-        console.log(`\n#${card.number}: ${card.title}`);
-        console.log(`Status: ${card.closed_at ? 'Closed' : 'Open'}`);
+        const goldenIndicator = card.golden ? ' ★' : '';
+        console.log(`\n#${card.number}: ${card.title}${goldenIndicator}`);
+        console.log(`Status: ${card.closed_at ? 'Closed' : 'Open'}${card.golden ? ' (Golden)' : ''}`);
         console.log(`Board: ${card.board?.name || '-'}`);
         console.log(`Column: ${card.column?.name || '-'}`);
         console.log(`Created: ${formatDate(card.created_at)}`);
@@ -226,6 +227,40 @@ export function cardsCommand(program) {
         await api.reopenCard(number);
         spinner.stop();
         success(`Card #${number} reopened`);
+      } catch (err) {
+        spinner.stop();
+        error(err.message);
+        process.exit(1);
+      }
+    });
+
+  cards
+    .command('gild <number>')
+    .description('Mark a card as golden (priority)')
+    .action(async (number) => {
+      const spinner = ora('Marking card as golden...').start();
+      try {
+        const api = new FizzyAPI();
+        await api.gildCard(number);
+        spinner.stop();
+        success(`Card #${number} marked as golden`);
+      } catch (err) {
+        spinner.stop();
+        error(err.message);
+        process.exit(1);
+      }
+    });
+
+  cards
+    .command('ungild <number>')
+    .description('Remove golden status from a card')
+    .action(async (number) => {
+      const spinner = ora('Removing golden status...').start();
+      try {
+        const api = new FizzyAPI();
+        await api.ungildCard(number);
+        spinner.stop();
+        success(`Card #${number} is no longer golden`);
       } catch (err) {
         spinner.stop();
         error(err.message);
