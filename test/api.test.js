@@ -177,6 +177,26 @@ describe('FizzyAPI', () => {
     });
   });
 
+  describe('moveCardToBoard', () => {
+    it('should PUT board_id to board endpoint', async () => {
+      global.fetch.mockResolvedValueOnce({
+        ok: true,
+        status: 204,
+        text: async () => '',
+      });
+
+      await api.moveCardToBoard(1, 'board-456');
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        'https://app.fizzy.do/test-account/cards/1/board',
+        expect.objectContaining({
+          method: 'PUT',
+          body: JSON.stringify({ board_id: 'board-456' }),
+        })
+      );
+    });
+  });
+
   describe('closeCard', () => {
     it('should POST to closure endpoint', async () => {
       global.fetch.mockResolvedValueOnce({

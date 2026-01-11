@@ -131,6 +131,14 @@ export class FizzyAPI {
     });
   }
 
+  async moveCardToBoard(cardNumber, boardId) {
+    this.requireAccount();
+    return this.request(`/${this.accountSlug}/cards/${cardNumber}/board`, {
+      method: 'PUT',
+      body: JSON.stringify({ board_id: boardId }),
+    });
+  }
+
   async closeCard(cardNumber) {
     this.requireAccount();
     return this.request(`/${this.accountSlug}/cards/${cardNumber}/closure`, {

@@ -375,6 +375,49 @@ export function cardsCommand(program) {
     });
 
   cards
+    .command('move-board <number> <board>')
+    .description('Move a card to a different board (by board name or ID)')
+    .option('--json', 'Output as JSON')
+    .action(async (number, board, options) => {
+      const spinner = ora('Moving card to board...').start();
+      try {
+        const api = new FizzyAPI();
+
+        // Get list of boards to find target
+        const boards = await api.listBoards();
+
+        // Find the board by ID or name (case-insensitive)
+        let targetBoard = boards.find(b => b.id === board);
+        if (!targetBoard) {
+          const boardLower = board.toLowerCase();
+          targetBoard = boards.find(b => b.name?.toLowerCase() === boardLower);
+        }
+
+        if (!targetBoard) {
+          spinner.stop();
+          error(`Board "${board}" not found. Available boards: ${boards.map(b => b.name).join(', ')}`);
+          process.exit(1);
+        }
+
+        // Move the card to the board
+        await api.moveCardToBoard(number, targetBoard.id);
+        spinner.stop();
+
+        if (options.json) {
+          const updatedCard = await api.getCard(number);
+          json(updatedCard);
+          return;
+        }
+
+        success(`Card #${number} moved to board "${targetBoard.name}"`);
+      } catch (err) {
+        spinner.stop();
+        error(err.message);
+        process.exit(1);
+      }
+    });
+
+  cards
     .command('delete <number>')
     .description('Delete a card')
     .action(async (number) => {
