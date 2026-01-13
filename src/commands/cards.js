@@ -89,8 +89,8 @@ export function cardsCommand(program) {
           console.log(`Tags: ${card.tags.map(t => typeof t === 'string' ? t : t.name).join(', ')}`);
         }
 
-        if (card.content) {
-          console.log(`\nContent:\n${card.content}`);
+        if (card.description) {
+          console.log(`\nDescription:\n${card.description}`);
         }
       } catch (err) {
         spinner.stop();
