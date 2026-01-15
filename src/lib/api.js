@@ -1,4 +1,5 @@
 import { getConfig } from './config.js';
+import { normalizeRichText } from './rich-text.js';
 
 const BASE_URL = 'https://app.fizzy.do';
 
@@ -145,19 +146,27 @@ export class FizzyAPI {
     return this.request(`/${this.accountSlug}/cards/${cardNumber}`);
   }
 
-  async createCard(boardId, data) {
+  async createCard(boardId, data, options = {}) {
     this.requireAccount();
+    const card = { ...data };
+    if (typeof card.description === 'string') {
+      card.description = normalizeRichText(card.description, { format: options.richTextFormat });
+    }
     return this.request(`/${this.accountSlug}/boards/${boardId}/cards`, {
       method: 'POST',
-      body: JSON.stringify({ card: data }),
+      body: JSON.stringify({ card }),
     });
   }
 
-  async updateCard(cardNumber, data) {
+  async updateCard(cardNumber, data, options = {}) {
     this.requireAccount();
+    const card = { ...data };
+    if (typeof card.description === 'string') {
+      card.description = normalizeRichText(card.description, { format: options.richTextFormat });
+    }
     return this.request(`/${this.accountSlug}/cards/${cardNumber}`, {
       method: 'PUT',
-      body: JSON.stringify({ card: data }),
+      body: JSON.stringify({ card }),
     });
   }
 
@@ -273,11 +282,14 @@ export class FizzyAPI {
     return this.request(`/${this.accountSlug}/cards/${cardNumber}/comments`);
   }
 
-  async createComment(cardNumber, content) {
+  async createComment(cardNumber, content, options = {}) {
     this.requireAccount();
+    const body = typeof content === 'string'
+      ? normalizeRichText(content, { format: options.richTextFormat })
+      : content;
     return this.request(`/${this.accountSlug}/cards/${cardNumber}/comments`, {
       method: 'POST',
-      body: JSON.stringify({ comment: { body: content } }),
+      body: JSON.stringify({ comment: { body } }),
     });
   }
 

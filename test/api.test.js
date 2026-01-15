@@ -353,7 +353,7 @@ describe('FizzyAPI', () => {
         'https://app.fizzy.do/test-account/cards/1/comments',
         expect.objectContaining({
           method: 'POST',
-          body: JSON.stringify({ comment: { body: 'New comment' } }),
+          body: JSON.stringify({ comment: { body: '<p>New comment</p>' } }),
         })
       );
     });

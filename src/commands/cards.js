@@ -104,16 +104,21 @@ export function cardsCommand(program) {
     .description('Create a new card')
     .option('-d, --description <content>', 'Card content/description')
     .option('-c, --column <id>', 'Column ID')
+    .option('--html', 'Treat description as raw HTML')
     .option('--json', 'Output as JSON')
     .action(async (boardId, title, options) => {
       const spinner = ora('Creating card...').start();
       try {
         const api = new FizzyAPI();
-        const card = await api.createCard(boardId, {
-          title,
-          description: options.description,
-          column_id: options.column,
-        });
+        const card = await api.createCard(
+          boardId,
+          {
+            title,
+            description: options.description,
+            column_id: options.column,
+          },
+          { richTextFormat: options.html ? 'html' : 'text' }
+        );
         spinner.stop();
 
         if (options.json) {
@@ -138,6 +143,7 @@ export function cardsCommand(program) {
     .description('Update a card')
     .option('-t, --title <title>', 'New title')
     .option('-d, --description <content>', 'New content')
+    .option('--html', 'Treat description as raw HTML')
     .option('-s, --status <status>', 'Set status (published, closed, not_now)')
     .option('--tags <ids>', 'Set tag IDs (comma-separated)')
     .option('--json', 'Output as JSON')
@@ -180,7 +186,9 @@ export function cardsCommand(program) {
 
         // Handle field updates via PUT
         if (hasDataUpdates) {
-          card = await api.updateCard(number, data);
+          card = await api.updateCard(number, data, {
+            richTextFormat: options.html ? 'html' : 'text',
+          });
         } else {
           card = await api.getCard(number);
         }
@@ -517,12 +525,15 @@ export function cardsCommand(program) {
   cards
     .command('comment <cardNumber> <content>')
     .description('Add a comment to a card')
+    .option('--html', 'Treat comment as raw HTML')
     .option('--json', 'Output as JSON')
     .action(async (cardNumber, content, options) => {
       const spinner = ora('Adding comment...').start();
       try {
         const api = new FizzyAPI();
-        const comment = await api.createComment(cardNumber, content);
+        const comment = await api.createComment(cardNumber, content, {
+          richTextFormat: options.html ? 'html' : 'text',
+        });
         spinner.stop();
 
         if (options.json) {
